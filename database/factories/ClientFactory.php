@@ -23,10 +23,10 @@ class ClientFactory extends Factory
     {
         return [
             'user_id' => '1',
-            'first_name' => $this->faker->name(),
-            'last_name' => $this->faker->unique()->name(),
+            'first_name' => $this->faker->word(),
+            'last_name' => $this->faker->word(),
             'email' => $this->faker->unique()->safeEmail(),
-            'phone' => $this->faker->unique()->phoneNumber(),
+            'phone' => $this->faker->phoneNumber(),
             'comment' => $this->faker->realText(100),
         ];
     }

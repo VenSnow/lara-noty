@@ -10,7 +10,43 @@
             @include('components.categories')
         </div>
         <div class="col">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis dolore eum illum labore magni necessitatibus officia pariatur placeat possimus praesentium quaerat quia quisquam reiciendis ullam, velit veniam vero voluptatem voluptatibus.</p>
+            <h1>Проекты</h1>
+            <div class="row">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">Название</th>
+                        <th scope="col">Домен</th>
+                        <th scope="col">Домен оплачен до</th>
+                        <th scope="col">Хост</th>
+                        <th scope="col">Хост оплачен до</th>
+                        <th scope="col">Владелец</th>
+                        <th scope="col">Действия</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($projects as $project)
+                        <tr class="@if(\Carbon\Carbon::parse($project->domain_end)->diffInDays(\Carbon\Carbon::now()) < 45) bg-warning text-dark @endif">
+                            <th scope="row">{{ \Illuminate\Support\Str::words($project->name, 3) }}</th>
+                            <td><a href="{{ $project->domain }}">{{ $project->domain }}</a></td>
+                            <td>{{ \Carbon\Carbon::parse($project->domain_end)->format('d/m/Y') }}</td>
+                            <td><a href="{{ route('hosts.show', $project->host->id) }}">{{ $project->host->name }}</a></td>
+                            <td>{{ \Carbon\Carbon::parse($project->host_end)->format('d/m/Y') }}</td>
+                            <td><a href="{{ route('clients.show', $project->client->id) }}">{{ $project->client->first_name . " " . $project->client->last_name }}</a></td>
+                            <td class="row row-cols-lg-auto g-3 align-items-center">
+                                <a class="btn btn-sm btn-primary me-2" href="{{ route('projects.show', $project->id) }}"><i class="fas fa-eye"></i></a>
+                                <form action="{{ route('projects.destroy', $project->id) }}" method="post">
+                                    @csrf
+                                    @method('delete')
+                                    <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+                {!! $projects->links() !!}
+            </div>
         </div>
     </div>
 @endsection

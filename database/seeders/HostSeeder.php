@@ -15,8 +15,10 @@ class HostSeeder extends Seeder
      */
     public function run()
     {
+        Host::factory(25)->create();
         Client::all()->each(function (Client $client) {
-           $client->hosts()->saveMany(Host::factory()->times(2)->make());
+            $random_hosts = Host::all()->random( rand(1, 10) )->pluck('id');
+            $client->hosts()->attach($random_hosts);
         });
     }
 }

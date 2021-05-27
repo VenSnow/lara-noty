@@ -16,8 +16,9 @@ class ProjectSeeder extends Seeder
      */
     public function run()
     {
-        Host::all()->each(function (Host $host) {
-           $host->projects()->saveMany(Project::factory()->times('3')->make(['client_id' => $host->client->id]));
+        Client::all()->each(function (Client $client) {
+            $random_host = collect($client->hosts->all())->random(1)->pluck('id');
+            $client->projects()->saveMany(Project::factory()->times('10')->make(['host_id' => $random_host[0]]));
         });
     }
 }

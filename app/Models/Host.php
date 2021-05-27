@@ -13,7 +13,6 @@ class Host extends Model
         'user_id',
         'name',
         'address',
-        'client_id',
         'host_login',
         'host_password',
         'comment',
@@ -24,9 +23,9 @@ class Host extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function client()
+    public function clients()
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsToMany(Client::class, 'client_host');
     }
 
     public function projects()

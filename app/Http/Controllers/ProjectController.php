@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\Project;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
     public function index()
     {
-        return view('projects.index');
+        $projects = Project::where('user_id', auth()->user()->id)->orderBy('domain_end')->orderBy('host_end')->paginate(15);
+        return view('projects.index', compact('projects'));
     }
 
     /**
@@ -33,15 +36,16 @@ class ProjectController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(Project $project)
     {
-        //
+        if (auth()->user()->id != $project->user_id)
+        {
+            return abort(404);
+        }
+        $clients = Client::where('user_id', auth()->user()->id)->select('id', 'first_name', 'last_name')->get();
+        $hosts = $project->client->hosts;
+        return view('projects.show', compact('project', 'clients', 'hosts'));
     }
 
     /**
@@ -64,7 +68,10 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        //
+        if (auth()->user()->id != $project->user_id)
+        {
+            return abort(404);
+        }
     }
 
     /**

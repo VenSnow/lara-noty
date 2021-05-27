@@ -25,7 +25,6 @@ class HostFactory extends Factory
             'user_id' => 1,
             'name' => $this->faker->unique()->name,
             'address' => $this->faker->unique()->word(),
-            'client_id' => rand(1, 5),
             'host_login' => $this->faker->word(),
             'host_password' => $this->faker->password(),
             'comment' => $this->faker->realText(150),

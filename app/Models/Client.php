@@ -25,7 +25,7 @@ class Client extends Model
 
     public function hosts()
     {
-        return $this->hasMany(Host::class);
+        return $this->belongsToMany(Host::class, 'client_host');
     }
 
     public function projects()

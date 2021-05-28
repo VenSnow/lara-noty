@@ -86,9 +86,6 @@ class ClientController extends Controller
         $client->phone = $request->phone;
         $client->comment = $request->comment;
         $client->save();
-        if ($client->hosts->contains('client_id', $client->id)) {
-
-        }
         $client->hosts()->sync($hosts);
 
         return back()->with('success', 'Клиент успешно изменён');

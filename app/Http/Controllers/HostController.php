@@ -13,25 +13,31 @@ class HostController extends Controller
         return view('hosts.index', compact('hosts'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+        return view('hosts.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required|min:3|max:50',
+            'address' => 'sometimes|min:3|max:100',
+            'host_login' =>'sometimes|min:3|max:100',
+            'host_password' => 'sometimes|min:3|max:100',
+            'comment' => 'sometimes|min:5|max:300',
+        ]);
+
+        Host::create([
+            'user_id' => auth()->user()->id,
+            'name' => $request->name,
+            'address' => $request->address,
+            'host_login' => $request->host_login,
+            'host_password' => $request->host_password,
+            'comment' => $request->comment,
+        ]);
+
+        return redirect()->route('hosts.index')->with('success', 'Хост успешно изменён');
     }
 
     public function show(Host $host)
@@ -45,12 +51,6 @@ class HostController extends Controller
         return view('hosts.show', compact( 'host', 'clients', 'projects'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Host  $host
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Host $host)
     {
         //
@@ -67,6 +67,7 @@ class HostController extends Controller
             'address' => 'sometimes|min:3|max:100',
             'host_login' =>'sometimes|min:3|max:100',
             'host_password' => 'sometimes|min:3|max:100',
+            'comment' => 'sometimes|min:5|max:300'
         ]);
 
         $host->update([
@@ -74,19 +75,18 @@ class HostController extends Controller
             'address' => $request->address,
             'host_login' => $request->host_login,
             'host_password' => $request->host_password,
+            'comment' => $request->comment,
         ]);
 
         return back()->with('success', 'Хост успешно изменён');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Host  $host
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Host $host)
     {
-        //
+        if ($host->user_id === auth()->user()->id) {
+            $host->delete();
+            return back()->with('success', 'Хост успешно удалён');
+        }
+        abort(403);
     }
 }

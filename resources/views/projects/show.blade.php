@@ -50,13 +50,13 @@
                                             <div class="ms-2 me-auto">
                                                 <div class="fw-bold">Клиент</div>
                                             </div>
-                                            {{ $project->client->first_name . " " . $project->client->last_name }}
+                                            <a href="{{ route('clients.show', $project->client->id) }}">{{ $project->client->first_name . " " . $project->client->last_name }}</a>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between align-items-start">
                                             <div class="ms-2 me-auto">
                                                 <div class="fw-bold">Хост</div>
                                             </div>
-                                            <a href="{{ $project->host->address }}">{{ $project->host->name }}</a>
+                                            <a href="{{ route('hosts.show', $project->host->id) }}">{{ $project->host->name }}</a>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between align-items-start">
                                             <div class="ms-2 me-auto">
@@ -132,7 +132,7 @@
                                         <div class="col-md-6">
                                             <label for="client_id" class="form-label">Клиент</label>
                                             <select class="form-select" aria-label="Default select example" name="client_id">
-                                                <option selected>{{ $project->client->first_name . " " . $project->client->last_name }}</option>
+                                                <option selected value="{{ $project->client->id }}">{{ $project->client->first_name . " " . $project->client->last_name }}</option>
                                                 @foreach($clients as $client)
                                                     <option value="{{ $client->id }}">{{ $client->first_name . " " . $client->last_name }}</option>
                                                 @endforeach
@@ -156,7 +156,12 @@
 
                                         <div class="col-md-6">
                                             <label for="host_id" class="form-label">Хост</label>
-                                            <input type="text" class="form-control @error('host_id') border border-danger @enderror" name="host_id" id="host_id" value="{{ old('host_id') ?? $project->host->name  }}">
+                                            <select class="form-select" aria-label="Default select example" name="host_id">
+                                                <option selected value="{{ $project->host->id }}">{{ $project->host->name }}</option>
+                                                @foreach($project->client->hosts as $host)
+                                                    <option value="{{ $host->id }}">{{ $host->name }}</option>
+                                                @endforeach
+                                            </select>
                                             @error('host_id')
                                             <div class="alert alert-danger p-2 mt-1" role="alert">
                                                 {{ $message }}

@@ -15,22 +15,11 @@ class ProjectController extends Controller
         return view('projects.index', compact('projects'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+        return view('projects.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         //
@@ -48,38 +37,48 @@ class ProjectController extends Controller
         return view('projects.show', compact('project', 'clients', 'hosts'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Project $project)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Project $project)
     {
-        if (auth()->user()->id != $project->user_id)
+        if (auth()->user()->id == $project->user_id)
         {
-            return abort(404);
+            $this->validate($request, [
+                'name' => 'required|min:3|max:50',
+                'domain' => 'required|min:3|max:50',
+                'client_id' => 'required|numeric',
+                'domain_end' => 'required|date',
+                'host_id' => 'required|numeric',
+                'host_end' => 'required|date',
+                'ftp_login' => 'required|min:2',
+                'ftp_password' => 'required',
+                'db_login' => 'required|min:2',
+                'db_password' => 'required',
+                'comment' => 'sometimes|min:3|max:500',
+            ]);
+
+            $project->update([
+                'name' => $request->name,
+                'domain' => $request->domain,
+                'client_id' => $request->client_id,
+                'domain_end' => $request->domain_end,
+                'host_id' => $request->host_id,
+                'host_end' => $request->host_end,
+                'ftp_login' => $request->ftp_login,
+                'ftp_password' => $request->ftp_password,
+                'db_login' => $request->db_login,
+                'db_password' => $request->db_password,
+                'comment' => $request->comment,
+            ]);
+
+            return back()->with('success', 'Проект успешно изменён');
         }
+        return abort(404);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Project $project)
     {
         //

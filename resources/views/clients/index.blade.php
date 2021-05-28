@@ -11,6 +11,11 @@
         </div>
         <div class="col">
             <h1>Клиенты</h1>
+            @if ($message = Session::get('success'))
+                <div class="alert alert-info mt-3" role="alert">
+                    {{ $message }}
+                </div>
+            @endif
             <div class="row">
                 <table class="table table-hover">
                     <thead>
@@ -29,7 +34,7 @@
                             <td>{{ $client->phone }}</td>
                             <td class="row row-cols-lg-auto g-3 align-items-center">
                                 <a class="btn btn-sm btn-primary me-2" href="{{ route('clients.show', $client->id) }}"><i class="fas fa-user"></i></a>
-                                <form action="{{ route('clients.destroy', $client) }}" method="post">
+                                <form action="{{ route('clients.destroy', $client) }}" method="post" onsubmit="return confirm('Вы действительно хотите удалить?');">
                                     @csrf
                                     @method('delete')
                                     <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-user-slash"></i></button>
@@ -39,7 +44,14 @@
                     @endforeach
                     </tbody>
                 </table>
-                {!! $clients->links() !!}
+                <div class="row">
+                    <div class="col-md-4">
+                        <a href="{{ route('clients.create') }}" class="btn btn-primary">Добавить клиента</a>
+                    </div>
+                    <div class="col-md-4">
+                        {!! $clients->links() !!}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

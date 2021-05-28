@@ -89,7 +89,7 @@
                                                 <td><a href="{{ $host->address }}">{{ $host->address }}</a></td>
                                                 <td class="row row-cols-lg-auto g-3 align-items-center">
                                                     <a class="btn btn-sm btn-primary me-2" href="{{ route('hosts.show', $host->id) }}"><i class="fas fa-eye"></i></a>
-                                                    <form action="{{ route('hosts.destroy', $host) }}" method="post">
+                                                    <form action="{{ route('hosts.destroy', $host) }}" method="post" onsubmit="return confirm('Вы действительно хотите удалить?');>
                                                         @csrf
                                                         @method('delete')
                                                         <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
@@ -132,7 +132,7 @@
                                                 <td>{{ \Carbon\Carbon::parse($project->host_end)->format('d/m/Y') }}</td>
                                                 <td class="row row-cols-lg-auto g-3 align-items-center">
                                                     <a class="btn btn-sm btn-primary me-2" href="{{ route('projects.show', $project->id) }}"><i class="fas fa-eye"></i></a>
-                                                    <form action="{{ route('projects.destroy', $project->id) }}" method="post">
+                                                    <form action="{{ route('projects.destroy', $project->id) }}" method="post" onsubmit="return confirm('Вы действительно хотите удалить?')";>
                                                         @csrf
                                                         @method('delete')
                                                         <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
@@ -189,6 +189,20 @@
                                         <label for="phone" class="form-label">Телефон</label>
                                         <input type="text" class="form-control @error('phone') border border-danger @enderror" name="phone" id="phone" value="{{ old('phone') ?? $client->phone  }}">
                                         @error('phone')
+                                        <div class="alert alert-danger p-2 mt-1" role="alert">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label for="hosts" class="form-label">Хосты</label>
+                                        <select class="form-select" multiple aria-label="multiple select example" name="hosts[]" required>
+                                            <option>Выберите хост</option>
+                                            @foreach($allHosts as $host)
+                                                <option value="{{ $host->id }}">{{ $host->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('hosts')
                                         <div class="alert alert-danger p-2 mt-1" role="alert">
                                             {{ $message }}
                                         </div>

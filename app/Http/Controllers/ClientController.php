@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Models\Host;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller
 {
@@ -32,15 +33,10 @@ class ClientController extends Controller
 
         $hosts = $request->hosts;
 
+        $client = $request->all();
 
-        $client = new Client;
-        $client->user_id = auth()->user()->id;
-        $client->first_name = $request->first_name;
-        $client->last_name = $request->last_name;
-        $client->email = $request->email;
-        $client->phone = $request->phone;
-        $client->comment = $request->comment;
-        $client->save();
+        $client = Auth::user()->clients()->create($client);
+
         $client->hosts()->attach($hosts);
 
         return redirect()->route('clients.index')->with('success', 'Клиент успешно добавлен');
@@ -79,13 +75,8 @@ class ClientController extends Controller
 
         $hosts = $request->hosts;
 
-        $client = Client::findOrFail($client->id);
-        $client->first_name = $request->first_name;
-        $client->last_name = $request->last_name;
-        $client->email = $request->email;
-        $client->phone = $request->phone;
-        $client->comment = $request->comment;
-        $client->save();
+        $client->update($request->all());
+
         $client->hosts()->sync($hosts);
 
         return back()->with('success', 'Клиент успешно изменён');

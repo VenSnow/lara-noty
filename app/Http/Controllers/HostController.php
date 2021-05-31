@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Host;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HostController extends Controller
 {
@@ -27,16 +28,11 @@ class HostController extends Controller
             'host_password' => 'sometimes|min:3|max:100',
         ]);
 
-        Host::create([
-            'user_id' => auth()->user()->id,
-            'name' => $request->name,
-            'address' => $request->address,
-            'host_login' => $request->host_login,
-            'host_password' => $request->host_password,
-            'comment' => $request->comment,
-        ]);
+        $host = $request->all();
 
-        return redirect()->route('hosts.index')->with('success', 'Хост успешно изменён');
+        Auth::user()->hosts()->create($host);
+
+        return redirect()->route('hosts.index')->with('success', 'Хост успешно добавлен');
     }
 
     public function show(Host $host)
@@ -68,13 +64,7 @@ class HostController extends Controller
             'host_password' => 'sometimes|min:3|max:100',
         ]);
 
-        $host->update([
-            'name' => $request->name,
-            'address' => $request->address,
-            'host_login' => $request->host_login,
-            'host_password' => $request->host_password,
-            'comment' => $request->comment,
-        ]);
+        $host->update($request->all());
 
         return back()->with('success', 'Хост успешно изменён');
     }

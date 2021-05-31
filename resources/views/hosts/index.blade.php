@@ -27,7 +27,7 @@
                             <td><a href="{{ $host->address }}">{{ $host->address }}</a></td>
                             <td class="row row-cols-lg-auto g-3 align-items-center">
                                 <a class="btn btn-sm btn-primary me-2" href="{{ route('hosts.show', $host->id) }}"><i class="fas fa-eye"></i></a>
-                                <form action="{{ route('hosts.destroy', $host) }}" method="post" onsubmit="return confirm('Вы действительно хотите удалить?')";>
+                                <form action="{{ route('hosts.destroy', $host) }}" method="post" onsubmit="return confirm('Вы действительно хотите удалить?')">
                                     @csrf
                                     @method('delete')
                                     <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>

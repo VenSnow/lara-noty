@@ -191,10 +191,9 @@
                                     </div>
                                     <div class="col-md-12">
                                         <label for="hosts" class="form-label">Хосты</label>
-                                        <select class="form-select" multiple aria-label="multiple select example" name="hosts[]" required>
-                                            <option>Выберите хост</option>
+                                        <select class="form-select" multiple aria-label="multiple select example" name="hosts[]" size="10" required>
                                             @foreach($allHosts as $host)
-                                                <option value="{{ $host->id }}" @if($client->hosts->contains('host_id', $host->id)) selected @endif>{{ $host->name }}</option>
+                                                <option value="{{ $host->id }}" @if($client->hosts->contains('id', $host->id)) selected @endif>{{ $host->name }}</option>
                                             @endforeach
                                         </select>
                                         @error('hosts')

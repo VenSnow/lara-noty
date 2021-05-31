@@ -25,7 +25,6 @@ class HostController extends Controller
             'address' => 'sometimes|min:3|max:100',
             'host_login' =>'sometimes|min:3|max:100',
             'host_password' => 'sometimes|min:3|max:100',
-            'comment' => 'sometimes|min:5|max:300',
         ]);
 
         Host::create([
@@ -67,7 +66,6 @@ class HostController extends Controller
             'address' => 'sometimes|min:3|max:100',
             'host_login' =>'sometimes|min:3|max:100',
             'host_password' => 'sometimes|min:3|max:100',
-            'comment' => 'sometimes|min:5|max:300'
         ]);
 
         $host->update([

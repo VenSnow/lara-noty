@@ -221,8 +221,8 @@
 
                                         <div class="col-md-12">
                                             <label for="comment">Комментарий</label>
-                                            <textarea class="form-control @error('') border border-danger @enderror" name="comment" id="comment" rows="10">{{ old('comment') ?? $project->comment  }}</textarea>
-                                            @error('')
+                                            <textarea class="form-control @error('comment') border border-danger @enderror" name="comment" id="comment" rows="10">{{ old('comment') ?? $project->comment  }}</textarea>
+                                            @error('comment')
                                             <div class="alert alert-danger p-2 mt-1" role="alert">
                                                 {{ $message }}
                                             </div>

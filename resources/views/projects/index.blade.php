@@ -26,7 +26,7 @@
                     </thead>
                     <tbody>
                     @foreach($projects as $project)
-                        <tr class="@if(\Carbon\Carbon::parse($project->domain_end)->diffInDays(\Carbon\Carbon::now()) < 45) bg-warning text-dark @endif">
+                        <tr class="@if(\Carbon\Carbon::parse($project->domain_end)->diffInDays(\Carbon\Carbon::now()) <= 45 || \Carbon\Carbon::parse($project->host_end)->diffInDays(\Carbon\Carbon::now()) <= 45) bg-warning text-dark @endif">
                             <th scope="row">{{ \Illuminate\Support\Str::words($project->name, 3) }}</th>
                             <td><a href="{{ $project->domain }}">{{ $project->domain }}</a></td>
                             <td>{{ \Carbon\Carbon::parse($project->domain_end)->format('d/m/Y') }}</td>
@@ -35,7 +35,7 @@
                             <td><a href="{{ route('clients.show', $project->client->id) }}">{{ $project->client->first_name . " " . $project->client->last_name }}</a></td>
                             <td class="row row-cols-lg-auto g-3 align-items-center">
                                 <a class="btn btn-sm btn-primary me-2" href="{{ route('projects.show', $project->id) }}"><i class="fas fa-eye"></i></a>
-                                <form action="{{ route('projects.destroy', $project->id) }}" method="post" onsubmit="return confirm('Вы действительно хотите удалить?');>
+                                <form action="{{ route('projects.destroy', $project->id) }}" method="post" onsubmit="return confirm('Вы действительно хотите удалить?');">
                                     @csrf
                                     @method('delete')
                                     <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>

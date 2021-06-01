@@ -52,13 +52,13 @@
                     </thead>
                     <tbody>
                     @foreach($projects as $project)
-                        <tr class="@if(\Carbon\Carbon::parse($project->domain_end)->diffInDays(\Carbon\Carbon::now()) <= 45 || \Carbon\Carbon::parse($project->host_end)->diffInDays(\Carbon\Carbon::now()) <= 45) bg-warning text-dark @endif">
+                        <tr class="@if(\Carbon\Carbon::parse($project->domain_end)->diffInDays(\Carbon\Carbon::now()) <= 45 || \Carbon\Carbon::parse($project->host_end)->diffInDays(\Carbon\Carbon::now()) <= 45) bg-warning text-dark @elseif(\Carbon\Carbon::parse($project->domain_end) < \Carbon\Carbon::now() || \Carbon\Carbon::parse($project->host_end) < \Carbon\Carbon::now()) bg-danger text-white @endif">
                             <th scope="row">{{ \Illuminate\Support\Str::words($project->name, 3) }}</th>
-                            <td><a href="{{ $project->domain }}">{{ $project->domain }}</a></td>
+                            <td><a href="{{ $project->domain }}" class="text-white">{{ $project->domain }}</a></td>
                             <td>{{ \Carbon\Carbon::parse($project->domain_end)->format('d/m/Y') }}</td>
-                            <td><a href="{{ route('hosts.show', $project->host->id) }}">{{ $project->host->name }}</a></td>
+                            <td><a href="{{ route('hosts.show', $project->host->id) }}" class="text-white">{{ $project->host->name }}</a></td>
                             <td>{{ \Carbon\Carbon::parse($project->host_end)->format('d/m/Y') }}</td>
-                            <td><a href="{{ route('clients.show', $project->client->id) }}">{{ $project->client->first_name . " " . $project->client->last_name }}</a></td>
+                            <td><a href="{{ route('clients.show', $project->client->id) }}" class="text-white">{{ $project->client->first_name . " " . $project->client->last_name }}</a></td>
                             <td class="row row-cols-lg-auto g-3 align-items-center">
                                 <a class="btn btn-sm btn-primary me-2" href="{{ route('projects.show', $project->id) }}"><i class="fas fa-eye"></i></a>
                                 <form action="{{ route('projects.destroy', $project->id) }}" method="post" onsubmit="return confirm('Вы действительно хотите удалить?');">

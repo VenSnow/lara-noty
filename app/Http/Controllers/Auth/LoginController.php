@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Auth\LoginRequest;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -12,14 +13,10 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'password' => 'required',
-        ]);
-
-        if (!auth()->attempt($request->only('name', 'password'))) {
+        $request->validated();
+        if (!Auth::attempt($request->only('name', 'password'))) {
             return back()->with('status', 'Неверный логин или пароль');
         }
 

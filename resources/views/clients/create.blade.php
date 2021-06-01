@@ -53,7 +53,6 @@
                         <div class="col-md-12">
                             <label for="hosts" class="form-label">Хосты</label>
                             <select class="form-select" multiple aria-label="multiple select example" name="hosts[]" required>
-                                <option>Выберите хост</option>
                                 @foreach($hosts as $host)
                                     <option value="{{ $host->id }}">{{ $host->name }}</option>
                                 @endforeach

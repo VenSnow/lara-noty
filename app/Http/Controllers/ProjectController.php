@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Project\StoreRequest;
+use App\Http\Requests\Project\UpdateRequest;
 use App\Models\Client;
 use App\Models\Host;
 use App\Models\Project;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
@@ -13,34 +14,21 @@ class ProjectController extends Controller
     public function index()
     {
         $projects = Project::where('user_id', auth()->user()->id)->orderByDesc('id')->paginate(15);
+
         return view('projects.index', compact('projects'));
     }
 
     public function create()
     {
-        $clients = Client::where('user_id', auth()->user()->id)->select('id', 'first_name', 'last_name')->get();
-        $hosts = Host::where('user_id', auth()->user()->id)->select('id', 'name')->get();
+        $clients = Client::where('user_id', Auth::user()->id)->select('id', 'first_name', 'last_name')->get();
+        $hosts = Host::where('user_id', Auth::user()->id)->select('id', 'name')->get();
+
         return view('projects.create', compact('clients', 'hosts'));
     }
 
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        $this->validate($request, [
-            'name' => 'required|min:3|max:50',
-            'domain' => 'required|min:3|max:50',
-            'client_id' => 'required|numeric',
-            'domain_end' => 'required|date',
-            'host_id' => 'required|numeric',
-            'host_end' => 'required|date',
-            'ftp_login' => 'required|min:2',
-            'ftp_password' => 'required',
-            'db_login' => 'required|min:2',
-            'db_password' => 'required',
-        ]);
-
-        $project = $request->all();
-
-        Auth::user()->projects()->create($project);
+        Auth::user()->projects()->create($request->validated());
 
         return redirect()->route('projects.index')->with('success', 'Проект успешно добавлен');
     }
@@ -48,51 +36,40 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        if (auth()->user()->id != $project->user_id)
-        {
-            return abort(404);
+        if (Auth::user()->id != $project->user_id) {
+            abort(404);
         }
-        $clients = Client::where('user_id', auth()->user()->id)->select('id', 'first_name', 'last_name')->get();
+
+        $clients = Client::where('user_id', Auth::user()->id)->select('id', 'first_name', 'last_name')->get();
         $hosts = $project->client->hosts;
+
         return view('projects.show', compact('project', 'clients', 'hosts'));
     }
 
     public function edit(Project $project)
     {
-        //
+        return redirect()->route('projects.show', $project);
     }
 
-    public function update(Request $request, Project $project)
+    public function update(UpdateRequest $request, Project $project)
     {
-        if (auth()->user()->id != $project->user_id)
-        {
-            return abort(404);
+        if (Auth::user()->id != $project->user_id) {
+            abort(404);
         }
-        $this->validate($request, [
-            'name' => 'required|min:3|max:50',
-            'domain' => 'required|min:3|max:50',
-            'client_id' => 'required|numeric',
-            'domain_end' => 'required|date',
-            'host_id' => 'required|numeric',
-            'host_end' => 'required|date',
-            'ftp_login' => 'required|min:2',
-            'ftp_password' => 'required',
-            'db_login' => 'required|min:2',
-            'db_password' => 'required',
-        ]);
 
-        $project->update($request->all());
+        $project->update($request->validated());
 
         return back()->with('success', 'Проект успешно изменён');
     }
 
     public function destroy(Project $project)
     {
-        if (auth()->user()->id != $project->user_id)
-        {
-            return abort(404);
+        if (Auth::user()->id != $project->user_id) {
+            abort(404);
         }
+
         $project->delete();
+
         return back()->with('success', 'Проект успешно удалён');
     }
 }

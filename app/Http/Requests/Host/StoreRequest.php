@@ -9,9 +9,9 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|min:3|max:50',
+            'name' => 'required|min:3|max:150',
             'address' => 'required|min:3|max:100',
-            'host_login' =>'required|min:3|max:100',
+            'host_login' => 'required|min:3|max:100',
             'host_password' => 'required|min:3|max:100',
             'comment' => 'sometimes|max:500',
         ];

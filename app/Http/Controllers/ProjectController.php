@@ -48,6 +48,9 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
+        if (Auth::user()->id != $project->user_id) {
+            abort(404);
+        }
         return redirect()->route('projects.show', $project);
     }
 
@@ -59,7 +62,7 @@ class ProjectController extends Controller
 
         $project->update($request->validated());
 
-        return back()->with('success', 'Проект успешно изменён');
+        return redirect()->route('projects.show', $project)->with('success', 'Проект успешно изменён');
     }
 
     public function destroy(Project $project)
@@ -70,6 +73,6 @@ class ProjectController extends Controller
 
         $project->delete();
 
-        return back()->with('success', 'Проект успешно удалён');
+        return redirect()->route('projects.index')->with('success', 'Проект успешно удалён');
     }
 }

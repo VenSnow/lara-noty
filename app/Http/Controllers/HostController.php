@@ -42,6 +42,9 @@ class HostController extends Controller
 
     public function edit(Host $host)
     {
+        if (Auth::user()->id != $host->user_id) {
+            abort(404);
+        }
         return redirect()->route('hosts.show', $host);
     }
 
@@ -53,17 +56,17 @@ class HostController extends Controller
 
         $host->update($request->validated());
 
-        return back()->with('success', 'Хост успешно изменён');
+        return redirect()->route('hosts.show', $host)->with('success', 'Хост успешно изменён');
     }
 
     public function destroy(Host $host)
     {
         if ($host->user_id != Auth::user()->id) {
-            abort(403);
+            abort(404);
         }
 
         $host->delete();
 
-        return back()->with('success', 'Хост успешно удалён');
+        return redirect()->route('hosts.index')->with('success', 'Хост успешно удалён');
     }
 }

@@ -8,11 +8,7 @@ use Tests\TestCase;
 
 class ClientControllerTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
+
     public function test_guest_user_can_not_see_clients_index_page()
     {
         $response = $this->get(route('clients.index'));
@@ -21,7 +17,8 @@ class ClientControllerTest extends TestCase
 
     public function test_guest_user_can_not_see_clients_show_page()
     {
-        $client = Client::factory()->create();
+        $user = User::factory()->create();
+        $client = Client::factory()->create(['user_id' => $user->id]);
         $response = $this->get(route('clients.show', $client->id));
         $response->assertRedirect(route('login'));
     }
@@ -32,10 +29,19 @@ class ClientControllerTest extends TestCase
         $response->assertRedirect(route('login'));
     }
 
+    public function test_guest_user_can_not_see_clients_edit_page()
+    {
+        $user = User::factory()->create();
+        $client = Client::factory()->create(['user_id' => $user->id]);
+        $response = $this->get(route('clients.edit', $client->id));
+        $response->assertRedirect(route('login'));
+    }
+
     public function test_auth_user_can_see_clients_index_page()
     {
         $user = User::factory()->create();
         $this->actingAs($user);
+        $this->assertAuthenticated();
         $response = $this->get(route('clients.index'));
         $response->assertStatus(200);
     }
@@ -44,6 +50,7 @@ class ClientControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAs($user);
+        $this->assertAuthenticated();
         $response = $this->get(route('clients.create'));
         $response->assertOk();
     }
@@ -52,6 +59,7 @@ class ClientControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAs($user);
+        $this->assertAuthenticated();
         $client = Client::factory()->create(['user_id' => $user->id]);
         $response = $this->get(route('clients.show', $client->id));
         $response->assertOk();
@@ -63,17 +71,18 @@ class ClientControllerTest extends TestCase
         $client = Client::factory()->create(['user_id' => $userOwner->id]);
         $userAnother = User::factory()->create();
         $this->actingAs($userAnother);
+        $this->assertAuthenticated();
         $response = $this->get(route('clients.show', $client->id));
         $response->assertStatus(404);
     }
 
-    public function test_auth_user_can_store_own_clients()
+    public function test_auth_user_can_store_clients()
     {
         $user = User::factory()->create();
         $this->actingAs($user);
+        $this->assertAuthenticated();
         $client = Client::factory()->make(['user_id' => $user->id]);
         $response = $this->post(route('clients.store'), [
-            'user_id' => $user->id,
             'first_name' => $client->first_name,
             'last_name' => $client->last_name,
             'email' => $client->email,
@@ -84,13 +93,13 @@ class ClientControllerTest extends TestCase
         $response->assertSessionHas('success', 'Клиент успешно добавлен');
     }
 
-    public function test_auth_user_can_not_store_own_clients_with_invalid_data()
+    public function test_auth_user_can_not_store_clients_with_invalid_data()
     {
         $user = User::factory()->create();
         $this->actingAs($user);
+        $this->assertAuthenticated();
         $client = Client::factory()->make(['user_id' => $user->id]);
         $response = $this->post(route('clients.store'), [
-            'user_id' => $user->id,
             'first_name' => '',
             'last_name' => 'a',
             'email' => 'asdasd',
@@ -104,6 +113,7 @@ class ClientControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAs($user);
+        $this->assertAuthenticated();
         $client = Client::factory()->create(['user_id' => $user->id]);
         $response = $this->get(route('clients.edit', $client->id));
         $response->assertRedirect(route('clients.show', $client->id));
@@ -114,6 +124,7 @@ class ClientControllerTest extends TestCase
         $userOwner = User::factory()->create();
         $userAnother = User::factory()->create();
         $this->actingAs($userAnother);
+        $this->assertAuthenticated();
         $client = Client::factory()->create(['user_id' => $userOwner->id]);
         $response = $this->get(route('clients.edit', $client->id));
         $response->assertStatus(404);
@@ -122,8 +133,9 @@ class ClientControllerTest extends TestCase
     public function test_auth_user_can_update_own_clients()
     {
         $user = User::factory()->create();
-        $client = Client::factory()->create(['user_id' => $user->id]);
         $this->actingAs($user);
+        $this->assertAuthenticated();
+        $client = Client::factory()->create(['user_id' => $user->id]);
         $response = $this->patch(route('clients.update', $client->id), [
             'first_name' => 'another name',
             'last_name' => 'another last name',
@@ -141,6 +153,7 @@ class ClientControllerTest extends TestCase
         $userAnother = User::factory()->create();
         $client = Client::factory()->create(['user_id' => $userOwner->id]);
         $this->actingAs($userAnother);
+        $this->assertAuthenticated();
         $response = $this->patch(route('clients.update', $client->id), [
             'first_name' => 'another name',
             'last_name' => 'another last name',
@@ -154,10 +167,11 @@ class ClientControllerTest extends TestCase
     public function test_auth_user_can_delete_own_clients()
     {
         $user = User::factory()->create();
-        $client = Client::factory()->create(['user_id' => $user->id]);
         $this->actingAs($user);
+        $this->assertAuthenticated();
+        $client = Client::factory()->create(['user_id' => $user->id]);
         $response = $this->delete(route('clients.destroy', $client->id));
-        $response->assertRedirect(route('dashboard_index'));
+        $response->assertRedirect(route('clients.index'));
         $response->assertSessionHas('success', 'Клиент успешно удалён');
     }
 
@@ -165,8 +179,9 @@ class ClientControllerTest extends TestCase
     {
         $userOwner = User::factory()->create();
         $userAnother = User::factory()->create();
-        $client = Client::factory()->create(['user_id' => $userOwner->id]);
         $this->actingAs($userAnother);
+        $this->assertAuthenticated();
+        $client = Client::factory()->create(['user_id' => $userOwner->id]);
         $response = $this->delete(route('clients.destroy', $client->id));
         $response->assertStatus(404);
     }

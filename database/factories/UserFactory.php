@@ -23,9 +23,10 @@ class UserFactory extends Factory
      */
     public function definition()
     {
+        $nameWithoutSpaces = trim($this->faker->name);
         return [
-            'name' => 'test',
-            'email' => 'example@mail.com',
+            'name' => $nameWithoutSpaces,
+            'email' => $this->faker->email,
             'email_verified_at' => now(),
             'password' => Hash::make('test'), // password
             'remember_token' => Str::random(10),

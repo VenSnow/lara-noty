@@ -12,7 +12,7 @@ class ClientController extends Controller
 {
     public function index()
     {
-        $clients = Client::where('user_id', auth()->user()->id)->orderByDesc('id')->paginate(15);
+        $clients = Client::where('user_id', Auth::user()->id)->orderByDesc('id')->paginate(15);
 
         return view('clients.index', compact('clients'));
     }
@@ -47,6 +47,10 @@ class ClientController extends Controller
 
     public function edit(Client $client)
     {
+        if (Auth::user()->id != $client->user_id) {
+            abort(404);
+        }
+
         return redirect()->route('clients.show', $client);
     }
 
@@ -59,7 +63,7 @@ class ClientController extends Controller
         $client->update($request->validated());
         $client->hosts()->sync($request->hosts);
 
-        return back()->with('success', 'Клиент успешно изменён');
+        return redirect()->route('clients.show', $client)->with('success', 'Клиент успешно изменён');
     }
 
     public function destroy(Client $client)
